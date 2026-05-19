@@ -141,8 +141,8 @@ export default function PlannerPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Study Planner</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Study Planner</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Plan and organize your study sessions
           </p>
         </div>
@@ -156,28 +156,28 @@ export default function PlannerPage() {
       </div>
 
       {/* Date navigation */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 dark:bg-gray-900 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigateDate(-1)}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Previous day"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-500" />
+            <ChevronLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
 
           <div className="text-center">
             <div className="flex items-center justify-center gap-2">
               <CalendarDays className="w-4 h-4 text-primary-500" />
-              <span className="font-semibold text-gray-800">{formattedSelectedDate}</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-100">{formattedSelectedDate}</span>
               {isToday && (
-                <span className="px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 text-xs font-medium">
+                <span className="px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 text-xs font-medium dark:bg-primary-500/15 dark:text-primary-300">
                   Today
                 </span>
               )}
             </div>
             {totalMinutes > 0 && (
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {hours > 0 ? `${hours}h ` : ''}{mins > 0 ? `${mins}m` : ''} of study planned
               </p>
             )}
@@ -185,10 +185,10 @@ export default function PlannerPage() {
 
           <button
             onClick={() => navigateDate(1)}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Next day"
           >
-            <ChevronRight className="w-5 h-5 text-gray-500" />
+            <ChevronRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 

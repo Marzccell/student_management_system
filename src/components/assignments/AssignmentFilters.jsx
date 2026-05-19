@@ -20,7 +20,7 @@ export default function AssignmentFilters({ activeFilter, onFilterChange }) {
           className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
             activeFilter === filter.value
               ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20'
-              : 'bg-white text-gray-500 border border-gray-200 hover:border-primary-300 hover:text-primary-600'
+              : 'bg-white text-gray-500 border border-gray-200 hover:border-primary-300 hover:text-primary-600 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-800 dark:hover:border-primary-500 dark:hover:text-primary-300'
           }`}
         >
           {filter.label}

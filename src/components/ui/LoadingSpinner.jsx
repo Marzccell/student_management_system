@@ -18,7 +18,7 @@ export default function LoadingSpinner({ size = 'md', text = '' }) {
         className={`${sizeMap[size]} text-primary-500 animate-spin`}
       />
       {text && (
-        <p className="text-sm text-gray-500 font-medium">{text}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{text}</p>
       )}
     </div>
   )

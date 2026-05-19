@@ -3,6 +3,8 @@
    ============================================= */
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* =============================================
    Custom Theme Variables
    Notion-inspired minimal palette
@@ -51,6 +53,24 @@ body {
   color: #1a1a2e;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.dark {
+  --color-sidebar: #0f172a;
+  --color-sidebar-hover: #1e293b;
+  --color-sidebar-active: #334155;
+  --color-surface: #111827;
+  --color-surface-dim: #0f172a;
+  --color-surface-hover: #1f2937;
+  --color-canvas: #0b1120;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 /* =============================================

@@ -44,15 +44,15 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in dark:bg-gray-900">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {isEditing ? 'Edit Study Session' : 'New Study Session'}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -62,7 +62,7 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {/* Subject */}
           <div>
-            <label htmlFor="session-subject" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="session-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Subject
             </label>
             <input
@@ -73,13 +73,13 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
               onChange={handleChange}
               placeholder="e.g. Physics"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
             />
           </div>
 
           {/* Topic */}
           <div>
-            <label htmlFor="session-topic" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="session-topic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Topic
             </label>
             <input
@@ -90,14 +90,14 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
               onChange={handleChange}
               placeholder="e.g. Newton's Laws of Motion"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
             />
           </div>
 
           {/* Duration & Date row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="session-duration" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="session-duration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Duration (min)
               </label>
               <input
@@ -109,11 +109,11 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
                 value={formData.duration}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
               />
             </div>
             <div>
-              <label htmlFor="session-date" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="session-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Date
               </label>
               <input
@@ -123,7 +123,7 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
                 value={formData.date}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Cancel
             </button>

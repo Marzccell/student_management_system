@@ -13,8 +13,11 @@ import {
   BookOpen,
   LogOut,
   GraduationCap,
+  Moon,
+  Sun,
   X,
 } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -24,6 +27,7 @@ const navItems = [
 
 export default function Sidebar({ isOpen, onClose }) {
   const { user, signOut } = useAuth()
+  const { isDark, toggleTheme } = useTheme()
 
   const handleSignOut = async () => {
     await signOut()
@@ -93,6 +97,16 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* User section & sign out */}
         <div className="px-3 py-4 border-t border-white/10">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-between w-full px-3 py-2.5 mb-2 rounded-xl text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <span className="flex items-center gap-3">
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+            </span>
+          </button>
           <div className="px-3 py-2 mb-2">
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Signed in as</p>
             <p className="text-sm text-gray-300 truncate">{user?.email}</p>

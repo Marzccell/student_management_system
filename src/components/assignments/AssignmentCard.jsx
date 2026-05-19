@@ -7,7 +7,7 @@
 import { CalendarDays, Pencil, Trash2, AlertTriangle } from 'lucide-react'
 import StatusBadge from '../ui/StatusBadge'
 
-export default function AssignmentCard({ assignment, onEdit, onDelete }) {
+export default function AssignmentCard({ assignment, onEdit, onDelete, onStatusChange, updatingStatus = false }) {
   const today = new Date().toISOString().split('T')[0]
   const isOverdue = assignment.deadline < today && assignment.status !== 'done'
 
@@ -19,8 +19,8 @@ export default function AssignmentCard({ assignment, onEdit, onDelete }) {
 
   return (
     <div
-      className={`bg-white rounded-2xl border p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 animate-fade-in ${
-        isOverdue ? 'border-red-200 ring-1 ring-red-100' : 'border-gray-100'
+      className={`bg-white rounded-2xl border p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 animate-fade-in dark:bg-gray-900 ${
+        isOverdue ? 'border-red-200 ring-1 ring-red-100 dark:border-red-500/40 dark:ring-red-500/20' : 'border-gray-100 dark:border-gray-800'
       }`}
     >
       {/* Header: title + actions */}
@@ -29,21 +29,21 @@ export default function AssignmentCard({ assignment, onEdit, onDelete }) {
           {isOverdue && (
             <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
           )}
-          <h3 className={`font-semibold text-sm leading-tight ${isOverdue ? 'text-red-700' : 'text-gray-800'}`}>
+          <h3 className={`font-semibold text-sm leading-tight ${isOverdue ? 'text-red-700 dark:text-red-300' : 'text-gray-800 dark:text-gray-100'}`}>
             {assignment.title}
           </h3>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button
             onClick={() => onEdit(assignment)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:text-gray-500 dark:hover:text-primary-300 dark:hover:bg-primary-500/10 transition-colors"
             aria-label="Edit assignment"
           >
             <Pencil className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onDelete(assignment.id)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:text-gray-500 dark:hover:text-red-300 dark:hover:bg-red-500/10 transition-colors"
             aria-label="Delete assignment"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -52,16 +52,22 @@ export default function AssignmentCard({ assignment, onEdit, onDelete }) {
       </div>
 
       {/* Subject label */}
-      <p className="text-xs text-gray-500 mb-3">{assignment.subject}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{assignment.subject}</p>
 
       {/* Badges */}
       <div className="flex items-center gap-2 mb-3">
-        <StatusBadge type="status" value={assignment.status} />
+        <StatusBadge
+          type="status"
+          value={assignment.status}
+          onClick={() => onStatusChange(assignment)}
+          disabled={updatingStatus}
+          title="Click to move to the next status"
+        />
         <StatusBadge type="priority" value={assignment.priority} />
       </div>
 
       {/* Deadline */}
-      <div className={`flex items-center gap-1.5 text-xs ${isOverdue ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+      <div className={`flex items-center gap-1.5 text-xs ${isOverdue ? 'text-red-500 dark:text-red-300 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
         <CalendarDays className="w-3.5 h-3.5" />
         <span>{isOverdue ? 'Overdue — ' : ''}{formattedDate}</span>
       </div>

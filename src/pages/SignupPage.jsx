@@ -64,30 +64,30 @@ export default function SignupPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-600 mb-4 shadow-lg shadow-primary-600/30">
             <GraduationCap className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          <p className="text-sm text-gray-500 mt-1">Start organizing your studies with StudyFlow</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Create your account</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Start organizing your studies with StudyFlow</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 dark:bg-gray-900 dark:border-gray-800">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Error message */}
             {error && (
-              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm animate-fade-in">
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm animate-fade-in dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-300">
                 {error}
               </div>
             )}
 
             {/* Success message */}
             {success && (
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm animate-fade-in">
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm animate-fade-in dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-300">
                 {success}
               </div>
             )}
 
             {/* Email field */}
             <div>
-              <label htmlFor="signup-email" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="signup-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Email address
               </label>
               <div className="relative">
@@ -99,14 +99,14 @@ export default function SignupPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
                 />
               </div>
             </div>
 
             {/* Password field */}
             <div>
-              <label htmlFor="signup-password" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="signup-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -118,14 +118,14 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Min. 6 characters"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
                 />
               </div>
             </div>
 
             {/* Confirm Password field */}
             <div>
-              <label htmlFor="signup-confirm-password" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="signup-confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Confirm Password
               </label>
               <div className="relative">
@@ -137,7 +137,7 @@ export default function SignupPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter your password"
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
                 />
               </div>
             </div>
@@ -161,7 +161,7 @@ export default function SignupPage() {
         </div>
 
         {/* Footer link */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
           Already have an account?{' '}
           <Link
             to="/login"

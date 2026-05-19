@@ -155,6 +155,43 @@ export default function AssignmentsPage() {
       ? assignments
       : assignments.filter((a) => a.status === filter)
 
+  const nextStatus = (status) => {
+    const statuses = ['not started', 'in progress', 'done']
+    const currentIndex = statuses.indexOf(status)
+    return statuses[(currentIndex + 1) % statuses.length]
+  }
+
+  const handleStatusChange = async (assignment) => {
+    if (!user?.id) return
+
+    const status = nextStatus(assignment.status)
+    const previousAssignments = assignments
+
+    setErrorMessage('')
+    setSaving(true)
+    setAssignments((prev) =>
+      prev.map((item) =>
+        item.id === assignment.id ? { ...item, status } : item
+      )
+    )
+
+    try {
+      const { error } = await supabase
+        .from('assignments')
+        .update({ status })
+        .eq('id', assignment.id)
+        .eq('user_id', user.id)
+
+      if (error) throw error
+    } catch (err) {
+      console.error('Error updating assignment status:', err)
+      setAssignments(previousAssignments)
+      setErrorMessage(err.message || 'Unable to update assignment status.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (loading) {
     return <LoadingSpinner size="lg" text="Loading assignments..." />
   }
@@ -164,8 +201,8 @@ export default function AssignmentsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Assignments</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Assignments</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Manage and track all your assignments
           </p>
         </div>
@@ -182,7 +219,7 @@ export default function AssignmentsPage() {
       <AssignmentFilters activeFilter={filter} onFilterChange={setFilter} />
 
       {errorMessage && !showForm && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
           {errorMessage}
         </div>
       )}
@@ -217,6 +254,8 @@ export default function AssignmentsPage() {
               assignment={assignment}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+              updatingStatus={saving}
             />
           ))}
         </div>

@@ -46,15 +46,15 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in dark:bg-gray-900">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {isEditing ? 'Edit Assignment' : 'New Assignment'}
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -64,7 +64,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {/* Title */}
           <div>
-            <label htmlFor="assignment-title" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="assignment-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Title
             </label>
             <input
@@ -75,13 +75,13 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
               onChange={handleChange}
               placeholder="e.g. Math Homework Ch. 5"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
             />
           </div>
 
           {/* Subject */}
           <div>
-            <label htmlFor="assignment-subject" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="assignment-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Subject
             </label>
             <input
@@ -92,13 +92,13 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
               onChange={handleChange}
               placeholder="e.g. Mathematics"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
             />
           </div>
 
           {/* Deadline */}
           <div>
-            <label htmlFor="assignment-deadline" className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label htmlFor="assignment-deadline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Deadline
             </label>
             <input
@@ -108,14 +108,14 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
               value={formData.deadline}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
             />
           </div>
 
           {/* Status & Priority row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="assignment-status" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="assignment-status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Status
               </label>
               <select
@@ -123,7 +123,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
               >
                 {STATUSES.map((s) => (
                   <option key={s} value={s} className="capitalize">
@@ -133,7 +133,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
               </select>
             </div>
             <div>
-              <label htmlFor="assignment-priority" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="assignment-priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Priority
               </label>
               <select
@@ -141,7 +141,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
                 name="priority"
                 value={formData.priority}
                 onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize"
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
               >
                 {PRIORITIES.map((p) => (
                   <option key={p} value={p} className="capitalize">
@@ -153,7 +153,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
           </div>
 
           {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
               {error}
             </div>
           )}
@@ -163,7 +163,7 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading, e
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Cancel
             </button>
