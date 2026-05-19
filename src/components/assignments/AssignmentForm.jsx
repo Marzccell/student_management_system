@@ -10,7 +10,7 @@ import { X, Loader2 } from 'lucide-react'
 const STATUSES = ['not started', 'in progress', 'done']
 const PRIORITIES = ['low', 'medium', 'high']
 
-export default function AssignmentForm({ assignment, onSave, onClose, loading }) {
+export default function AssignmentForm({ assignment, onSave, onClose, loading, error }) {
   const [formData, setFormData] = useState({
     title: '',
     subject: '',
@@ -151,6 +151,12 @@ export default function AssignmentForm({ assignment, onSave, onClose, loading })
               </select>
             </div>
           </div>
+
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">

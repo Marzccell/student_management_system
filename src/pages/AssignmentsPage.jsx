@@ -22,16 +22,22 @@ export default function AssignmentsPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingAssignment, setEditingAssignment] = useState(null)
   const [filter, setFilter] = useState('all')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
-    fetchAssignments()
-  }, [])
+    if (user?.id) {
+      fetchAssignments()
+    }
+  }, [user?.id])
 
   /**
    * Fetch all assignments for the current user, sorted by deadline
    */
   const fetchAssignments = async () => {
+    if (!user?.id) return
+
     setLoading(true)
+    setErrorMessage('')
     try {
       const { data, error } = await supabase
         .from('assignments')
@@ -43,6 +49,7 @@ export default function AssignmentsPage() {
       setAssignments(data || [])
     } catch (err) {
       console.error('Error fetching assignments:', err)
+      setErrorMessage(err.message || 'Unable to load assignments.')
     } finally {
       setLoading(false)
     }
@@ -52,31 +59,52 @@ export default function AssignmentsPage() {
    * Create or update an assignment
    */
   const handleSave = async (formData) => {
+    if (!user?.id) {
+      setErrorMessage('You must be signed in to save assignments.')
+      return
+    }
+
+    const payload = {
+      title: formData.title.trim(),
+      subject: formData.subject.trim(),
+      deadline: formData.deadline,
+      status: formData.status,
+      priority: formData.priority,
+    }
+
+    if (!payload.title || !payload.subject) {
+      setErrorMessage('Title and subject are required.')
+      return
+    }
+
     setSaving(true)
+    setErrorMessage('')
     try {
       if (editingAssignment) {
         // Update existing assignment
         const { error } = await supabase
           .from('assignments')
-          .update(formData)
+          .update(payload)
           .eq('id', editingAssignment.id)
+          .eq('user_id', user.id)
 
         if (error) throw error
       } else {
         // Create new assignment
         const { error } = await supabase
           .from('assignments')
-          .insert({ ...formData, user_id: user.id })
+          .insert([{ ...payload, user_id: user.id }])
 
         if (error) throw error
       }
 
-      // Refresh the list and close form
+      // Refresh the list and close form after a successful write.
       await fetchAssignments()
       setShowForm(false)
       setEditingAssignment(null)
     } catch (err) {
       console.error('Error saving assignment:', err)
+      setErrorMessage(err.message || 'Unable to save assignment.')
     } finally {
       setSaving(false)
     }
@@ -93,11 +121,13 @@ export default function AssignmentsPage() {
         .from('assignments')
         .delete()
         .eq('id', id)
+        .eq('user_id', user.id)
 
       if (error) throw error
       setAssignments((prev) => prev.filter((a) => a.id !== id))
     } catch (err) {
       console.error('Error deleting assignment:', err)
+      setErrorMessage(err.message || 'Unable to delete assignment.')
     }
   }
 
@@ -105,6 +135,7 @@ export default function AssignmentsPage() {
    * Open edit form with assignment data
    */
   const handleEdit = (assignment) => {
+    setErrorMessage('')
     setEditingAssignment(assignment)
     setShowForm(true)
   }
@@ -115,6 +146,7 @@ export default function AssignmentsPage() {
   const handleCloseForm = () => {
     setShowForm(false)
     setEditingAssignment(null)
+    setErrorMessage('')
   }
 
   // Filter assignments by status
@@ -148,6 +180,12 @@ export default function AssignmentsPage() {
 
       {/* Filters */}
       <AssignmentFilters activeFilter={filter} onFilterChange={setFilter} />
+
+      {errorMessage && !showForm && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
+      )}
 
       {/* Assignment grid */}
       {filteredAssignments.length === 0 ? (
@@ -191,6 +229,7 @@ export default function AssignmentsPage() {
           onSave={handleSave}
           onClose={handleCloseForm}
           loading={saving}
+          error={errorMessage}
         />
       )}
     </div>
