@@ -14,6 +14,7 @@ test('migration preserves legacy data and enforces project/file ownership', asyn
   try {
     await db.exec(`
       CREATE ROLE authenticated; CREATE ROLE anon;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated;
       CREATE SCHEMA auth; CREATE SCHEMA storage;
       CREATE TABLE auth.users (id uuid PRIMARY KEY);
       CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
@@ -46,6 +47,28 @@ test('migration preserves legacy data and enforces project/file ownership', asyn
     )
     await db.exec(migration)
     await db.exec(migration) // Re-running the same reviewed SQL is safe.
+    const cleanupPermissions = `SELECT
+      has_function_privilege('anon', 'public.studyflow_require_file_cleanup()', 'EXECUTE') AS anon,
+      has_function_privilege('authenticated', 'public.studyflow_require_file_cleanup()', 'EXECUTE') AS authenticated`
+    assert.deepEqual((await db.query(cleanupPermissions)).rows, [
+      { anon: false, authenticated: false },
+    ])
+    // Reproduce the grants left by the earlier upgrade on an existing project.
+    await db.exec(
+      `GRANT EXECUTE ON FUNCTION public.studyflow_require_file_cleanup() TO anon, authenticated`
+    )
+    await db.exec(
+      await readFile(
+        new URL(
+          '../supabase/migrations/202610110002_private_cleanup_function.sql',
+          import.meta.url
+        ),
+        'utf8'
+      )
+    )
+    assert.deepEqual((await db.query(cleanupPermissions)).rows, [
+      { anon: false, authenticated: false },
+    ])
     assert.deepEqual(
       (
         await db.query(

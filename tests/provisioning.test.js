@@ -10,6 +10,7 @@ test('standalone activation works on a fresh database and reset touches only the
   try {
     await db.exec(`
       CREATE ROLE authenticated; CREATE ROLE anon;
+      ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated;
       CREATE SCHEMA auth; CREATE SCHEMA storage;
       CREATE TABLE auth.users (id uuid PRIMARY KEY, email text UNIQUE);
       CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
@@ -27,6 +28,14 @@ test('standalone activation works on a fresh database and reset touches only the
     )
     await db.exec(setup)
     await db.exec(setup)
+    assert.deepEqual(
+      (
+        await db.query(`SELECT
+        has_function_privilege('anon', 'public.studyflow_require_file_cleanup()', 'EXECUTE') AS anon,
+        has_function_privilege('authenticated', 'public.studyflow_require_file_cleanup()', 'EXECUTE') AS authenticated`)
+      ).rows,
+      [{ anon: false, authenticated: false }]
+    )
     await db.exec(
       `SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','${owner}',false);`
     )

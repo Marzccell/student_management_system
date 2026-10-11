@@ -138,7 +138,9 @@ BEGIN
   END IF;
   RETURN OLD;
 END $$;
-REVOKE ALL ON FUNCTION public.studyflow_require_file_cleanup() FROM public;
+-- Supabase may explicitly grant new functions to client roles by default.
+-- This function runs only through the task deletion trigger.
+REVOKE ALL ON FUNCTION public.studyflow_require_file_cleanup() FROM public, anon, authenticated;
 DROP TRIGGER IF EXISTS studyflow_task_file_cleanup ON public.assignments;
 CREATE TRIGGER studyflow_task_file_cleanup BEFORE DELETE ON public.assignments
 FOR EACH ROW EXECUTE FUNCTION public.studyflow_require_file_cleanup();
