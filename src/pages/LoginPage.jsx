@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [remember, setRemember] = useState(true)
   const { signIn } = useAuth()
   const navigate = useNavigate()
 
@@ -23,7 +24,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { error } = await signIn(email, password)
+      const { error } = await signIn(email, password, remember)
       if (error) {
         setError(error.message)
         setPassword('')
@@ -46,8 +47,12 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-600 mb-4 shadow-lg shadow-primary-600/30">
             <GraduationCap className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your StudyFlow dashboard</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Welcome back
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Sign in to your StudyFlow dashboard
+          </p>
         </div>
 
         {/* Card */}
@@ -62,7 +67,10 @@ export default function LoginPage() {
 
             {/* Email field */}
             <div>
-              <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="login-email"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Email address
               </label>
               <div className="relative">
@@ -81,7 +89,10 @@ export default function LoginPage() {
 
             {/* Password field */}
             <div>
-              <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="login-password"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Password
               </label>
               <div className="relative">
@@ -97,6 +108,15 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+
+            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(event) => setRemember(event.target.checked)}
+              />
+              Remember me on this device
+            </label>
 
             {/* Submit button */}
             <button

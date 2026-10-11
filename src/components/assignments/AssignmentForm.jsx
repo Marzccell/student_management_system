@@ -1,186 +1,223 @@
-/**
- * AssignmentForm
- * =================
- * Modal form for creating and editing assignments.
- * Fields: title, subject, deadline, status, priority.
- */
-import { useState, useEffect } from 'react'
-import { X, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import Modal from '../ui/Modal'
+import TaskAttachments from './TaskAttachments'
+import { useWorkspace } from '../../context/WorkspaceContext'
+import { TASK_STATUSES, localDate, statusLabel } from '../../lib/workspace'
 
-const STATUSES = ['not started', 'in progress', 'done']
-const PRIORITIES = ['low', 'medium', 'high']
-
-export default function AssignmentForm({ assignment, onSave, onClose, loading, error }) {
-  const [formData, setFormData] = useState({
-    title: '',
-    subject: '',
-    deadline: new Date().toISOString().split('T')[0],
-    status: 'not started',
-    priority: 'medium',
+export default function AssignmentForm({
+  assignment,
+  defaultProject = '',
+  onClose,
+}) {
+  const { projects, enhanced, saveTask } = useWorkspace()
+  const [record, setRecord] = useState(assignment)
+  const [data, setData] = useState({
+    title: assignment?.title || '',
+    description: assignment?.description || '',
+    subject: assignment?.subject || '',
+    deadline: assignment ? assignment.deadline || '' : localDate(),
+    status: assignment?.status || 'not started',
+    priority: assignment?.priority || 'medium',
+    project_id: assignment?.project_id || defaultProject,
   })
-
-  // Populate form when editing an existing assignment
-  useEffect(() => {
-    if (assignment) {
-      setFormData({
-        title: assignment.title || '',
-        subject: assignment.subject || '',
-        deadline: assignment.deadline || new Date().toISOString().split('T')[0],
-        status: assignment.status || 'not started',
-        priority: assignment.priority || 'medium',
-      })
+  const [saving, setSaving] = useState(false)
+  const [fileBusy, setFileBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const busy = saving || fileBusy
+  const change = (event) => {
+    setData((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }))
+    setMessage('')
+  }
+  async function submit(event) {
+    event.preventDefault()
+    setSaving(true)
+    setError('')
+    try {
+      const saved = await saveTask(data, record?.id)
+      setRecord(saved)
+      setMessage(
+        'Task saved. You can manage its attachments below or close this window.'
+      )
+      if (!enhanced) onClose()
+    } catch (err) {
+      setError(err.message || 'Unable to save this task.')
+    } finally {
+      setSaving(false)
     }
-  }, [assignment])
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
   }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    onSave(formData)
-  }
-
-  const isEditing = !!assignment
-
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md animate-fade-in dark:bg-gray-900">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-            {isEditing ? 'Edit Assignment' : 'New Assignment'}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          {/* Title */}
+    <Modal
+      title={record ? 'Edit task' : 'New task'}
+      busy={busy}
+      onClose={onClose}
+    >
+      <form onSubmit={submit} className="space-y-4">
+        <fieldset disabled={busy} className="space-y-4">
           <div>
-            <label htmlFor="assignment-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label className="sf-label" htmlFor="task-title">
               Title
             </label>
             <input
-              id="assignment-title"
+              autoFocus
+              id="task-title"
+              className="sf-input"
               name="title"
-              type="text"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="e.g. Math Homework Ch. 5"
+              value={data.title}
+              onChange={change}
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
+              maxLength={200}
+              placeholder="What needs to get done?"
             />
           </div>
-
-          {/* Subject */}
-          <div>
-            <label htmlFor="assignment-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Subject
-            </label>
-            <input
-              id="assignment-subject"
-              name="subject"
-              type="text"
-              value={formData.subject}
-              onChange={handleChange}
-              placeholder="e.g. Mathematics"
-              required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
-            />
-          </div>
-
-          {/* Deadline */}
-          <div>
-            <label htmlFor="assignment-deadline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Deadline
-            </label>
-            <input
-              id="assignment-deadline"
-              name="deadline"
-              type="date"
-              value={formData.deadline}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
-            />
-          </div>
-
-          {/* Status & Priority row */}
-          <div className="grid grid-cols-2 gap-3">
+          {enhanced && (
+            <>
+              <div>
+                <label className="sf-label" htmlFor="task-description">
+                  Description
+                </label>
+                <textarea
+                  id="task-description"
+                  className="sf-input"
+                  name="description"
+                  value={data.description}
+                  onChange={change}
+                  rows={3}
+                  maxLength={10000}
+                  placeholder="Notes, details, or next steps"
+                />
+              </div>
+              <div>
+                <label className="sf-label" htmlFor="task-project">
+                  Project
+                </label>
+                <select
+                  id="task-project"
+                  className="sf-input"
+                  name="project_id"
+                  value={data.project_id}
+                  onChange={change}
+                >
+                  <option value="">No project</option>
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="assignment-status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className="sf-label" htmlFor="task-subject">
+                Subject / category
+              </label>
+              <input
+                id="task-subject"
+                className="sf-input"
+                name="subject"
+                value={data.subject}
+                onChange={change}
+                required
+                maxLength={200}
+                placeholder="e.g. Mathematics, Personal"
+              />
+            </div>
+            <div>
+              <label className="sf-label" htmlFor="task-deadline">
+                Deadline {enhanced && '(optional)'}
+              </label>
+              <input
+                id="task-deadline"
+                className="sf-input"
+                type="date"
+                name="deadline"
+                value={data.deadline}
+                onChange={change}
+                required={!enhanced}
+              />
+            </div>
+            <div>
+              <label className="sf-label" htmlFor="task-status">
                 Status
               </label>
               <select
-                id="assignment-status"
+                id="task-status"
+                className="sf-input"
                 name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
+                value={data.status}
+                onChange={change}
               >
-                {STATUSES.map((s) => (
-                  <option key={s} value={s} className="capitalize">
-                    {s}
+                {TASK_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {statusLabel(status)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="assignment-priority" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className="sf-label" htmlFor="task-priority">
                 Priority
               </label>
               <select
-                id="assignment-priority"
+                id="task-priority"
+                className="sf-input"
                 name="priority"
-                value={formData.priority}
-                onChange={handleChange}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all capitalize dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100"
+                value={data.priority}
+                onChange={change}
               >
-                {PRIORITIES.map((p) => (
-                  <option key={p} value={p} className="capitalize">
-                    {p}
+                {['low', 'medium', 'high'].map((priority) => (
+                  <option key={priority} value={priority}>
+                    {priority}
                   </option>
                 ))}
               </select>
             </div>
           </div>
-
           {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300">
+            <p role="alert" className="sf-error">
               {error}
-            </div>
+            </p>
           )}
-
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
+          {message && (
+            <p
+              role="status"
+              className="text-sm text-emerald-700 dark:text-emerald-400"
+            >
+              {message}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
             <button
               type="button"
+              className="sf-button-secondary"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
-              Cancel
+              Close
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-md shadow-primary-600/20"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                isEditing ? 'Save Changes' : 'Create Assignment'
-              )}
+            <button className="sf-button" type="submit">
+              {saving ? 'Saving…' : record ? 'Save changes' : 'Create task'}
             </button>
           </div>
-        </form>
-      </div>
-    </div>
+        </fieldset>
+      </form>
+      {enhanced && (
+        <div className="mt-5">
+          {record ? (
+            <fieldset disabled={saving}>
+              <TaskAttachments taskId={record.id} onBusyChange={setFileBusy} />
+            </fieldset>
+          ) : (
+            <p className="text-xs text-gray-500">
+              Create this task to add private attachments.
+            </p>
+          )}
+        </div>
+      )}
+    </Modal>
   )
 }

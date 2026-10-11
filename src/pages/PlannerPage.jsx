@@ -7,11 +7,18 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { localDate } from '../lib/workspace'
 import StudySessionCard from '../components/planner/StudySessionCard'
 import StudySessionForm from '../components/planner/StudySessionForm'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import EmptyState from '../components/ui/EmptyState'
-import { Plus, BookOpen, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react'
+import {
+  Plus,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+} from 'lucide-react'
 
 export default function PlannerPage() {
   const { user } = useAuth()
@@ -22,11 +29,9 @@ export default function PlannerPage() {
   const [editingSession, setEditingSession] = useState(null)
 
   // Date navigation state
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0]
-  )
+  const [selectedDate, setSelectedDate] = useState(localDate())
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = localDate()
   const isToday = selectedDate === today
 
   useEffect(() => {
@@ -119,12 +124,14 @@ export default function PlannerPage() {
    * Navigate to previous or next day
    */
   const navigateDate = (direction) => {
-    const date = new Date(selectedDate)
+    const date = new Date(`${selectedDate}T12:00:00`)
     date.setDate(date.getDate() + direction)
-    setSelectedDate(date.toISOString().split('T')[0])
+    setSelectedDate(localDate(date))
   }
 
-  const formattedSelectedDate = new Date(selectedDate).toLocaleDateString('en-US', {
+  const formattedSelectedDate = new Date(
+    `${selectedDate}T12:00:00`
+  ).toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -141,7 +148,9 @@ export default function PlannerPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Study Planner</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Study Planner
+          </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Plan and organize your study sessions
           </p>
@@ -169,7 +178,9 @@ export default function PlannerPage() {
           <div className="text-center">
             <div className="flex items-center justify-center gap-2">
               <CalendarDays className="w-4 h-4 text-primary-500" />
-              <span className="font-semibold text-gray-800 dark:text-gray-100">{formattedSelectedDate}</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-100">
+                {formattedSelectedDate}
+              </span>
               {isToday && (
                 <span className="px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 text-xs font-medium dark:bg-primary-500/15 dark:text-primary-300">
                   Today
@@ -178,7 +189,8 @@ export default function PlannerPage() {
             </div>
             {totalMinutes > 0 && (
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                {hours > 0 ? `${hours}h ` : ''}{mins > 0 ? `${mins}m` : ''} of study planned
+                {hours > 0 ? `${hours}h ` : ''}
+                {mins > 0 ? `${mins}m` : ''} of study planned
               </p>
             )}
           </div>

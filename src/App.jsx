@@ -7,16 +7,20 @@
  * - Layout structure with Sidebar for authenticated pages
  */
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { lazy } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { WorkspaceProvider } from './context/WorkspaceContext'
 import { ThemeProvider } from './context/ThemeContext'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import DashboardPage from './pages/DashboardPage'
-import AssignmentsPage from './pages/AssignmentsPage'
 import PlannerPage from './pages/PlannerPage'
 import LoadingSpinner from './components/ui/LoadingSpinner'
 import { AlertTriangle } from 'lucide-react'
+
+const AssignmentsPage = lazy(() => import('./pages/AssignmentsPage'))
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 
 function ConfigErrorScreen({ message }) {
   return (
@@ -27,13 +31,16 @@ function ConfigErrorScreen({ message }) {
             <AlertTriangle className="h-5 w-5 text-red-600" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Deployment configuration missing</h1>
+            <h1 className="text-lg font-semibold text-gray-900">
+              Deployment configuration missing
+            </h1>
             <p className="mt-2 text-sm text-gray-600">{message}</p>
             <p className="mt-3 text-sm text-gray-600">
               Add these variables in Vercel Project Settings, then redeploy:
             </p>
             <div className="mt-3 rounded-xl bg-gray-50 px-3 py-2 font-mono text-xs text-gray-700">
-              VITE_SUPABASE_URL<br />
+              VITE_SUPABASE_URL
+              <br />
               VITE_SUPABASE_ANON_KEY
             </div>
           </div>
@@ -99,39 +106,42 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-          {/* Public routes — login and signup */}
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <LoginPage />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <PublicRoute>
-                <SignupPage />
-              </PublicRoute>
-            }
-          />
+            {/* Public routes — login and signup */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute>
+                  <SignupPage />
+                </PublicRoute>
+              }
+            />
 
-          {/* Protected routes — wrapped in AppLayout */}
-          <Route
-            element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/assignments" element={<AssignmentsPage />} />
-            <Route path="/planner" element={<PlannerPage />} />
-          </Route>
+            {/* Protected routes — wrapped in AppLayout */}
+            <Route
+              element={
+                <ProtectedRoute>
+                  <WorkspaceProvider>
+                    <AppLayout />
+                  </WorkspaceProvider>
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/assignments" element={<AssignmentsPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/planner" element={<PlannerPage />} />
+            </Route>
 
-          {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

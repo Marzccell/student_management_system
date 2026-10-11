@@ -5,6 +5,7 @@
  * Reads credentials from environment variables set in .env.local.
  */
 import { createClient } from '@supabase/supabase-js'
+import { authStorage } from './authStorage'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -16,4 +17,6 @@ export const supabaseConfigError =
 
 export const supabase = supabaseConfigError
   ? null
-  : createClient(supabaseUrl, supabaseAnonKey)
+  : createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { storage: authStorage },
+    })

@@ -6,13 +6,14 @@
  */
 import { CalendarDays, AlertTriangle } from 'lucide-react'
 import StatusBadge from '../ui/StatusBadge'
+import { localDate, formatDate } from '../../lib/workspace'
 
 export default function UpcomingAssignments({ assignments }) {
-  const today = new Date().toISOString().split('T')[0]
+  const today = localDate()
 
   // Sort by deadline, filter out "done", take first 5
   const upcoming = [...assignments]
-    .filter((a) => a.status !== 'done')
+    .filter((a) => a.status !== 'done' && a.deadline)
     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
     .slice(0, 5)
 
@@ -58,7 +59,7 @@ export default function UpcomingAssignments({ assignments }) {
               </div>
               <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 flex-shrink-0 ml-3">
                 <CalendarDays className="w-3.5 h-3.5" />
-                <span>{new Date(assignment.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                <span>{formatDate(assignment.deadline)}</span>
               </div>
             </div>
           )

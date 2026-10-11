@@ -1,76 +1,116 @@
-/**
- * AssignmentCard
- * =================
- * Displays a single assignment with title, subject, deadline, status, and priority.
- * Shows overdue state with red styling. Includes edit and delete actions.
- */
-import { CalendarDays, Pencil, Trash2, AlertTriangle } from 'lucide-react'
+import {
+  CalendarDays,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  FolderKanban,
+  Paperclip,
+} from 'lucide-react'
 import StatusBadge from '../ui/StatusBadge'
+import {
+  formatDate,
+  localDate,
+  statusLabel,
+  TASK_STATUSES,
+} from '../../lib/workspace'
 
-export default function AssignmentCard({ assignment, onEdit, onDelete, onStatusChange, updatingStatus = false }) {
-  const today = new Date().toISOString().split('T')[0]
-  const isOverdue = assignment.deadline < today && assignment.status !== 'done'
-
-  const formattedDate = new Date(assignment.deadline).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
-
+export default function AssignmentCard({
+  assignment,
+  project,
+  onEdit,
+  onDelete,
+  onStatusChange,
+  updatingStatus = false,
+  draggable = false,
+}) {
+  const overdue =
+    assignment.deadline &&
+    assignment.deadline < localDate() &&
+    assignment.status !== 'done'
   return (
-    <div
-      className={`bg-white rounded-2xl border p-5 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 animate-fade-in dark:bg-gray-900 ${
-        isOverdue ? 'border-red-200 ring-1 ring-red-100 dark:border-red-500/40 dark:ring-red-500/20' : 'border-gray-100 dark:border-gray-800'
-      }`}
+    <article
+      draggable={draggable && !updatingStatus}
+      onDragStart={(event) => {
+        event.dataTransfer.setData('text/plain', assignment.id)
+        event.dataTransfer.effectAllowed = 'move'
+      }}
+      className={`sf-panel p-4 ${draggable ? 'cursor-grab active:cursor-grabbing' : ''} ${overdue ? 'border-red-300 dark:border-red-800' : ''}`}
     >
-      {/* Header: title + actions */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-start gap-2 min-w-0">
-          {isOverdue && (
-            <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <button
+          className="min-w-0 break-words text-left text-sm font-semibold hover:text-primary-600"
+          disabled={updatingStatus}
+          onClick={() => onEdit(assignment)}
+        >
+          {overdue && (
+            <AlertTriangle className="mr-1 inline text-red-500" size={14} />
           )}
-          <h3 className={`font-semibold text-sm leading-tight ${isOverdue ? 'text-red-700 dark:text-red-300' : 'text-gray-800 dark:text-gray-100'}`}>
-            {assignment.title}
-          </h3>
-        </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
+          {assignment.title}
+        </button>
+        <div className="flex shrink-0">
           <button
+            className="sf-icon-button"
+            disabled={updatingStatus}
+            aria-label={`Edit ${assignment.title}`}
             onClick={() => onEdit(assignment)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-primary-50 dark:text-gray-500 dark:hover:text-primary-300 dark:hover:bg-primary-500/10 transition-colors"
-            aria-label="Edit assignment"
           >
-            <Pencil className="w-3.5 h-3.5" />
+            <Pencil size={15} />
           </button>
           <button
-            onClick={() => onDelete(assignment.id)}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 dark:text-gray-500 dark:hover:text-red-300 dark:hover:bg-red-500/10 transition-colors"
-            aria-label="Delete assignment"
+            className="sf-icon-button text-red-500"
+            disabled={updatingStatus}
+            aria-label={`Delete ${assignment.title}`}
+            onClick={() => onDelete(assignment)}
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 size={15} />
           </button>
         </div>
       </div>
-
-      {/* Subject label */}
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{assignment.subject}</p>
-
-      {/* Badges */}
-      <div className="flex items-center gap-2 mb-3">
-        <StatusBadge
-          type="status"
-          value={assignment.status}
-          onClick={() => onStatusChange(assignment)}
+      {assignment.description && (
+        <p className="mb-3 line-clamp-3 whitespace-pre-wrap break-words text-sm text-gray-500 dark:text-gray-400">
+          {assignment.description}
+        </p>
+      )}
+      <p className="mb-2 break-words text-xs text-gray-500 dark:text-gray-400">
+        {assignment.subject}
+      </p>
+      <p className="mb-3 flex items-center gap-1.5 text-xs text-primary-600 dark:text-primary-300">
+        <FolderKanban size={13} className="shrink-0" />
+        <span className="truncate">{project?.name || 'No project'}</span>
+      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <select
+          aria-label={`Status for ${assignment.title}`}
           disabled={updatingStatus}
-          title="Click to move to the next status"
-        />
+          value={assignment.status}
+          onChange={(event) => onStatusChange(assignment, event.target.value)}
+          className="max-w-36 rounded-lg border border-gray-200 bg-gray-50 p-1.5 text-xs dark:border-gray-700 dark:bg-gray-950"
+        >
+          {TASK_STATUSES.map((status) => (
+            <option key={status} value={status}>
+              {statusLabel(status)}
+            </option>
+          ))}
+        </select>
         <StatusBadge type="priority" value={assignment.priority} />
       </div>
-
-      {/* Deadline */}
-      <div className={`flex items-center gap-1.5 text-xs ${isOverdue ? 'text-red-500 dark:text-red-300 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
-        <CalendarDays className="w-3.5 h-3.5" />
-        <span>{isOverdue ? 'Overdue — ' : ''}{formattedDate}</span>
+      <div
+        className={`mt-3 flex items-center justify-between gap-2 text-xs ${overdue ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}
+      >
+        <span className="flex items-center gap-1">
+          <CalendarDays size={13} />
+          {overdue ? 'Overdue · ' : ''}
+          {formatDate(assignment.deadline)}
+        </span>
+        <button
+          onClick={() => onEdit(assignment)}
+          className="sf-icon-button"
+          aria-label={`Open details and attachments for ${assignment.title}`}
+          disabled={updatingStatus}
+        >
+          <Paperclip size={14} />
+        </button>
       </div>
-    </div>
+    </article>
   )
 }

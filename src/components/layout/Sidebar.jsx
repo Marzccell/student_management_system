@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard,
   ClipboardList,
+  FolderKanban,
   BookOpen,
   LogOut,
   GraduationCap,
@@ -21,7 +22,8 @@ import { useTheme } from '../../context/ThemeContext'
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/assignments', icon: ClipboardList, label: 'Assignments' },
+  { to: '/projects', icon: FolderKanban, label: 'Projects' },
+  { to: '/assignments', icon: ClipboardList, label: 'Tasks' },
   { to: '/planner', icon: BookOpen, label: 'Study Planner' },
 ]
 

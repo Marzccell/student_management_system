@@ -6,13 +6,19 @@
  */
 import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
+import { localDate } from '../../lib/workspace'
 
-export default function StudySessionForm({ session, onSave, onClose, loading }) {
+export default function StudySessionForm({
+  session,
+  onSave,
+  onClose,
+  loading,
+}) {
   const [formData, setFormData] = useState({
     subject: '',
     topic: '',
     duration: 30,
-    date: new Date().toISOString().split('T')[0],
+    date: localDate(),
   })
 
   // Populate form when editing an existing session
@@ -22,7 +28,7 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
         subject: session.subject || '',
         topic: session.topic || '',
         duration: session.duration || 30,
-        date: session.date || new Date().toISOString().split('T')[0],
+        date: session.date || localDate(),
       })
     }
   }, [session])
@@ -62,7 +68,10 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           {/* Subject */}
           <div>
-            <label htmlFor="session-subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label
+              htmlFor="session-subject"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+            >
               Subject
             </label>
             <input
@@ -79,7 +88,10 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
 
           {/* Topic */}
           <div>
-            <label htmlFor="session-topic" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label
+              htmlFor="session-topic"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+            >
               Topic
             </label>
             <input
@@ -97,7 +109,10 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
           {/* Duration & Date row */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="session-duration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="session-duration"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Duration (min)
               </label>
               <input
@@ -113,7 +128,10 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
               />
             </div>
             <div>
-              <label htmlFor="session-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="session-date"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Date
               </label>
               <input
@@ -144,8 +162,10 @@ export default function StudySessionForm({ session, onSave, onClose, loading }) 
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
+              ) : isEditing ? (
+                'Save Changes'
               ) : (
-                isEditing ? 'Save Changes' : 'Create Session'
+                'Create Session'
               )}
             </button>
           </div>

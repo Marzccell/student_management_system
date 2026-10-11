@@ -3,6 +3,8 @@
 -- =============================================
 -- Run this SQL in your Supabase project's SQL Editor:
 -- https://supabase.com/dashboard/project/_/sql/new
+-- New installations: run this base schema, then apply the SQL files in
+-- supabase/migrations/ in filename order. Existing installations: migrations only.
 -- =============================================
 
 -- =============================================
